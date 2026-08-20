@@ -299,8 +299,6 @@
     font-size:1.08rem; color:#282e25; line-height:1.5;
   }
   .avis-name{ margin-top:1.1rem; font-size:0.75rem; text-transform:uppercase; letter-spacing:0.08em; opacity:0.55; }
-  .avis-source{ margin-top:2rem; font-size:0.78rem; opacity:0.55; }
-  .avis-source a{ text-decoration:underline; }
 
   /* ---------- CTA ---------- */
   .cta-banner{ background:var(--ink); color:var(--parchment); text-align:center; padding:6rem 5vw; }
@@ -338,6 +336,11 @@
 
   /* ---------- PERMANENT TRIAL CTA ---------- */
   .fixed-trial-cta{
+    appearance:none;
+    -webkit-appearance:none;
+    font-family:inherit;
+    border-left:0; border-right:0; border-bottom:0;
+    cursor:pointer;
     position:fixed;
     left:0; right:0; bottom:0;
     z-index:65;
@@ -363,13 +366,11 @@
     opacity:1;
     pointer-events:auto;
   }
-  .fixed-trial-cta:not(.over-dark):hover{ background:var(--accent); }
   .fixed-trial-cta.over-dark{
     background:#f8f5f0;
     color:var(--ink);
     border-top-color:rgba(40,46,37,0.16);
   }
-  .fixed-trial-cta.over-dark:hover{ background:var(--card); }
 
   @media (max-width:640px){
     .fixed-trial-cta{
@@ -377,6 +378,103 @@
       padding:.82rem 5vw calc(.82rem + env(safe-area-inset-bottom));
       font-size:.66rem;
       letter-spacing:.15em;
+    }
+  }
+
+
+  .fixed-trial-cta:focus,
+  .fixed-trial-cta:focus-visible,
+  .fixed-trial-cta:active{
+    outline:none;
+    box-shadow:none;
+  }
+  .fixed-trial-cta:not(.over-dark):hover,
+  .fixed-trial-cta:not(.over-dark):active,
+  .fixed-trial-cta:not(.over-dark):focus{
+    background:var(--ink);
+    color:#f8f5f0;
+  }
+  .fixed-trial-cta.over-dark:hover,
+  .fixed-trial-cta.over-dark:active,
+  .fixed-trial-cta.over-dark:focus{
+    background:#f8f5f0;
+    color:var(--ink);
+  }
+
+  /* ---------- BACK TO TOP ---------- */
+  .back-to-top{
+    position:fixed;
+    right:1.15rem;
+    bottom:calc(76px + env(safe-area-inset-bottom));
+    z-index:66;
+    width:42px;
+    height:42px;
+    display:grid;
+    place-items:center;
+    border:1px solid rgba(40,46,37,0.18);
+    border-radius:50%;
+    background:rgba(40,46,37,0.94);
+    color:#f8f5f0;
+    opacity:0;
+    transform:translateY(10px);
+    pointer-events:none;
+    transition:opacity .25s ease, transform .25s ease, background .25s ease, color .25s ease, border-color .25s ease;
+    backdrop-filter:blur(8px);
+    -webkit-backdrop-filter:blur(8px);
+  }
+  .back-to-top svg{ width:17px; height:17px; display:block; }
+  .back-to-top.is-visible{
+    opacity:1;
+    transform:translateY(0);
+    pointer-events:auto;
+  }
+  .back-to-top.over-dark{
+    background:rgba(248,245,240,0.95);
+    color:var(--ink);
+    border-color:rgba(248,245,240,0.22);
+  }
+  .back-to-top:focus-visible{
+    outline:1px solid currentColor;
+    outline-offset:3px;
+  }
+
+  /* ---------- MOBILE REVIEWS: INFINITE SWIPE CAROUSEL ---------- */
+  @media (max-width:760px){
+    .avis-grid{
+      display:flex;
+      grid-template-columns:none;
+      gap:12px;
+      width:100vw;
+      margin-left:calc(50% - 50vw);
+      margin-top:2.1rem;
+      padding:0 9vw 0 9vw;
+      overflow-x:auto;
+      overflow-y:hidden;
+      background:transparent;
+      border:0;
+      scroll-snap-type:x mandatory;
+      scroll-padding-inline:9vw;
+      overscroll-behavior-x:contain;
+      -webkit-overflow-scrolling:touch;
+      scrollbar-width:none;
+      touch-action:pan-x pan-y;
+    }
+    .avis-grid::-webkit-scrollbar{ display:none; }
+    .avis-card{
+      flex:0 0 82vw;
+      max-width:none;
+      min-width:0;
+      border:1px solid var(--line) !important;
+      scroll-snap-align:center;
+      scroll-snap-stop:always;
+      padding:1.65rem;
+    }
+    .avis-card.is-clone{ pointer-events:none; }
+    .back-to-top{
+      right:.85rem;
+      bottom:calc(70px + env(safe-area-inset-bottom));
+      width:40px;
+      height:40px;
     }
   }
 
@@ -470,12 +568,19 @@
   </div>
 </section>
 
-<a
-  href="mailto:frenchthroughbrands@outlook.com?subject=Free%20introductory%20lesson"
+<button
+  type="button"
   class="fixed-trial-cta"
   id="fixedTrialCta"
+  data-mailto="mailto:frenchthroughbrands@outlook.com?subject=Free%20introductory%20lesson"
   aria-label="Book my free trial lesson"
->Book my free trial lesson</a>
+>Book my free trial lesson</button>
+
+<button class="back-to-top" id="backToTop" type="button" aria-label="Back to top">
+  <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path d="M12 20V5M6.5 10.5 12 5l5.5 5.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+</button>
 
 <!-- ================= PONT ================= -->
 <section style="padding:4.5rem 5vw 3.5rem;">
@@ -691,7 +796,7 @@
     </div>
     <h2 style="margin-top:1rem;">What my students say.</h2>
   </div>
-  <div class="avis-grid">
+  <div class="avis-grid" id="reviewsCarousel" aria-label="Student reviews. Swipe horizontally on mobile.">
     <div class="avis-card">
       <div class="avis-platform">Preply</div>
       <div class="avis-stars">★★★★★</div>
@@ -729,7 +834,6 @@
       <div class="avis-name">Grace</div>
     </div>
   </div>
-  <div class="avis-source">Verified reviews on <a href="https://preply.com/en/tutor/7532741" target="_blank">Preply</a> and iTalki — a selection of the most detailed reviews.</div>
 </section>
 
 <!-- ================= CTA ================= -->
@@ -778,6 +882,26 @@
 
   const hero = document.querySelector('.hero');
   const fixedTrialCta = document.getElementById('fixedTrialCta');
+  const backToTop = document.getElementById('backToTop');
+
+  // Use a button rather than a link for the permanent CTA: no visited-link colour
+  // and no page hash/URL mutation. The mail client is launched from the click handler.
+  fixedTrialCta?.addEventListener('click', () => {
+    const mailto = fixedTrialCta.dataset.mailto;
+    if (!mailto) return;
+    const mailLink = document.createElement('a');
+    mailLink.href = mailto;
+    mailLink.target = '_blank';
+    mailLink.rel = 'noopener';
+    mailLink.style.display = 'none';
+    document.body.appendChild(mailLink);
+    mailLink.click();
+    mailLink.remove();
+  });
+
+  backToTop?.addEventListener('click', () => {
+    window.scrollTo({ top:0, behavior:'smooth' });
+  });
 
   function sectionBehindFixedCta(){
     if (!fixedTrialCta) return null;
@@ -793,20 +917,115 @@
     if (!hero || !fixedTrialCta) return;
     const hasPassedHero = hero.getBoundingClientRect().bottom <= 0;
     fixedTrialCta.classList.toggle('is-visible', hasPassedHero);
+    backToTop?.classList.toggle('is-visible', hasPassedHero);
 
     if (!hasPassedHero){
       fixedTrialCta.classList.remove('over-dark');
+      backToTop?.classList.remove('over-dark');
       return;
     }
 
     const currentSection = sectionBehindFixedCta();
     const isDarkSection = currentSection?.dataset.sectionTone === 'dark';
     fixedTrialCta.classList.toggle('over-dark', isDarkSection);
+    backToTop?.classList.toggle('over-dark', isDarkSection);
   }
 
   updateFixedTrialCta();
   window.addEventListener('scroll', updateFixedTrialCta, { passive:true });
   window.addEventListener('resize', updateFixedTrialCta);
+
+  // Infinite swipe carousel on mobile. We add one clone at each end, then
+  // silently jump to the matching real card whenever a clone becomes centred.
+  const reviewsCarousel = document.getElementById('reviewsCarousel');
+  const mobileReviews = window.matchMedia('(max-width: 760px)');
+  let reviewsReady = false;
+  let reviewsScrollTimer = null;
+
+  function centeredCardIndex(track){
+    const cards = [...track.querySelectorAll('.avis-card')];
+    const center = track.scrollLeft + track.clientWidth / 2;
+    let bestIndex = 0;
+    let bestDistance = Infinity;
+    cards.forEach((card, index) => {
+      const cardCenter = card.offsetLeft + card.offsetWidth / 2;
+      const distance = Math.abs(cardCenter - center);
+      if (distance < bestDistance){
+        bestDistance = distance;
+        bestIndex = index;
+      }
+    });
+    return bestIndex;
+  }
+
+  function centerReviewCard(card, instant = false){
+    if (!reviewsCarousel || !card) return;
+    const target = card.offsetLeft - (reviewsCarousel.clientWidth - card.offsetWidth) / 2;
+    if (instant){
+      const previousSnap = reviewsCarousel.style.scrollSnapType;
+      reviewsCarousel.style.scrollSnapType = 'none';
+      reviewsCarousel.scrollLeft = target;
+      reviewsCarousel.getBoundingClientRect();
+      reviewsCarousel.style.scrollSnapType = previousSnap;
+    } else {
+      reviewsCarousel.scrollTo({ left:target, behavior:'smooth' });
+    }
+  }
+
+  function normalizeInfiniteReviews(){
+    if (!reviewsReady || !reviewsCarousel) return;
+    const cards = [...reviewsCarousel.querySelectorAll('.avis-card')];
+    if (cards.length < 3) return;
+    const index = centeredCardIndex(reviewsCarousel);
+    if (index === 0){
+      centerReviewCard(cards[cards.length - 2], true);
+    } else if (index === cards.length - 1){
+      centerReviewCard(cards[1], true);
+    }
+  }
+
+  function onReviewsScroll(){
+    window.clearTimeout(reviewsScrollTimer);
+    reviewsScrollTimer = window.setTimeout(normalizeInfiniteReviews, 90);
+  }
+
+  function setupMobileReviews(){
+    if (!reviewsCarousel || reviewsReady || !mobileReviews.matches) return;
+    const originals = [...reviewsCarousel.querySelectorAll('.avis-card:not(.is-clone)')];
+    if (originals.length < 2) return;
+
+    const before = originals[originals.length - 1].cloneNode(true);
+    const after = originals[0].cloneNode(true);
+    before.classList.add('is-clone');
+    after.classList.add('is-clone');
+    before.setAttribute('aria-hidden','true');
+    after.setAttribute('aria-hidden','true');
+    reviewsCarousel.prepend(before);
+    reviewsCarousel.append(after);
+    reviewsReady = true;
+    reviewsCarousel.addEventListener('scroll', onReviewsScroll, { passive:true });
+
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => centerReviewCard(originals[0], true));
+    });
+  }
+
+  function teardownMobileReviews(){
+    if (!reviewsCarousel || !reviewsReady || mobileReviews.matches) return;
+    reviewsCarousel.removeEventListener('scroll', onReviewsScroll);
+    reviewsCarousel.querySelectorAll('.is-clone').forEach(card => card.remove());
+    reviewsCarousel.scrollLeft = 0;
+    reviewsReady = false;
+  }
+
+  function syncReviewsMode(){
+    if (mobileReviews.matches) setupMobileReviews();
+    else teardownMobileReviews();
+  }
+
+  syncReviewsMode();
+  if (mobileReviews.addEventListener) mobileReviews.addEventListener('change', syncReviewsMode);
+  else mobileReviews.addListener(syncReviewsMode);
 </script>
 
 
